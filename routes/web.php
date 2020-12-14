@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,14 +16,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia\Inertia::render('Dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/dashboard', 'DashboardController@index')
+    ->name('dashboard');
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/contacts', function () {
-    return Inertia\Inertia::render('Contacts', [
-        'contacts' => [
-            1,2,3
-        ]
-    ]);
-})->name('contacts');
+Route::middleware(['auth:sanctum', 'verified'])
+    ->get('/contacts', 'ContactsController@index')
+    ->name('contacts');
