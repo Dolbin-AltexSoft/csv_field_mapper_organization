@@ -1925,6 +1925,215 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'ContactUploadForm',
+  components: {
+    Button: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      currentStep: 0,
+      form: {
+        file: null
+      }
+    };
+  },
+  computed: {
+    steps: function steps() {
+      return [{
+        key: 'upload_file',
+        title: 'Upload file'
+      }, {
+        key: 'map_fields',
+        title: 'Map Fields'
+      }, {
+        key: 'replace_strategy',
+        title: 'Replace Strategy'
+      }, {
+        key: 'confirm',
+        title: 'Confirm'
+      }];
+    }
+  },
+  methods: {
+    preUpload: function preUpload($event) {
+      console.log($event);
+      this.form.file = $event.target.files[0];
+    },
+    upload: function upload() {
+      var formData = new FormData();
+      formData.append('file', this.form.file);
+      return axios.post('/import/parse-contacts', formData);
+    },
+    next: function next() {
+      var _this = this;
+
+      this.upload().then(function (res) {
+        _this.currentStep += _this.currentStep === _this.steps.length - 1 ? 0 : 1;
+      })["catch"](function (e) {
+        console.log(e);
+      });
+    },
+    prev: function prev() {
+      this.currentStep -= this.currentStep === 0 ? 0 : 1;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js& ***!
@@ -3342,140 +3551,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var _Components_ContactsUploadForm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Components/ContactsUploadForm */ "./resources/js/Components/ContactsUploadForm.vue");
 //
 //
 //
@@ -3569,44 +3645,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
+    ContactUploadForm: _Components_ContactsUploadForm__WEBPACK_IMPORTED_MODULE_1__["default"],
     AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
     contacts: {
       type: Array,
       "default": []
-    }
-  },
-  data: function data() {
-    return {
-      currentStep: 0
-    };
-  },
-  computed: {
-    steps: function steps() {
-      return [{
-        key: 'upload_file',
-        title: 'Upload file'
-      }, {
-        key: 'map_fields',
-        title: 'Map Fields'
-      }, {
-        key: 'replace_strategy',
-        title: 'Replace Strategy'
-      }, {
-        key: 'confirm',
-        title: 'Confirm'
-      }];
-    }
-  },
-  methods: {
-    next: function next() {
-      this.currentStep += this.currentStep === this.steps.length - 1 ? 0 : 1;
-    },
-    prev: function prev() {
-      this.currentStep -= this.currentStep === 0 ? 0 : 1;
     }
   }
 });
@@ -44797,6 +44845,418 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3&":
+/*!*********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3& ***!
+  \*********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "py-12" }, [
+    _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+      _c(
+        "div",
+        { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
+        [
+          _c("div", { staticClass: "flex flex-col" }, [
+            _c(
+              "div",
+              { staticClass: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+                  },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+                      },
+                      [
+                        _c("div", { staticClass: "mx-4 p-4" }, [
+                          _c(
+                            "div",
+                            { staticClass: "flex items-center" },
+                            [
+                              _vm._l(_vm.steps, function(step, index) {
+                                return [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "flex items-center text-teal-600 relative"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          class: {
+                                            "rounded-full": true,
+                                            "text-center": true,
+                                            transition: true,
+                                            "duration-500": true,
+                                            "ease-in-out": true,
+                                            "h-12": true,
+                                            "w-12": true,
+                                            "py-3": true,
+                                            "border-2": true,
+                                            "border-teal-600": true,
+                                            "bg-teal-600":
+                                              _vm.currentStep === index,
+                                            "text-white":
+                                              _vm.currentStep === index
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                                " +
+                                              _vm._s(index + 1) +
+                                              "\n                                            "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-teal-600"
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                                " +
+                                              _vm._s(step.title) +
+                                              "\n                                            "
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("div", {
+                                    staticClass:
+                                      "flex-auto border-t-2 transition duration-500 ease-in-out border-gray-300"
+                                  })
+                                ]
+                              })
+                            ],
+                            2
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  "upload_file" ===
+                                  _vm.steps.find(function(s, i) {
+                                    return i === _vm.currentStep
+                                  }).key,
+                                expression:
+                                  "'upload_file' === steps.find((s, i) => i === currentStep).key"
+                              }
+                            ],
+                            staticClass: "mt-8 p-4"
+                          },
+                          [
+                            _c("div", [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "block text-sm font-medium text-gray-700"
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                        Upload contacts\n                                    "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    { staticClass: "space-y-1 text-center" },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "flex text-sm text-gray-600"
+                                        },
+                                        [
+                                          _c(
+                                            "label",
+                                            {
+                                              staticClass:
+                                                "relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500",
+                                              attrs: { for: "file-upload" }
+                                            },
+                                            [
+                                              _c(
+                                                "span",
+                                                {
+                                                  staticClass:
+                                                    "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer hover:bg-teal-600 bg-teal-600 text-teal-100 border duration-200 ease-in-out border-teal-600 transition"
+                                                },
+                                                [_vm._v("Upload a file")]
+                                              ),
+                                              _vm._v(" "),
+                                              _c("input", {
+                                                staticClass: "sr-only",
+                                                attrs: {
+                                                  id: "file-upload",
+                                                  name: "file-upload",
+                                                  type: "file"
+                                                },
+                                                on: { change: _vm.preUpload }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "p",
+                                        {
+                                          staticClass: "text-xs text-gray-500"
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                                CSV up to 10MB\n                                            "
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  "map_fields" ===
+                                  _vm.steps.find(function(s, i) {
+                                    return i === _vm.currentStep
+                                  }).key,
+                                expression:
+                                  "'map_fields' === steps.find((s, i) => i === currentStep).key"
+                              }
+                            ],
+                            staticClass: "mt-8 p-4"
+                          },
+                          [_vm._m(0)]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  "replace_strategy" ===
+                                  _vm.steps.find(function(s, i) {
+                                    return i === _vm.currentStep
+                                  }).key,
+                                expression:
+                                  "'replace_strategy' === steps.find((s, i) => i === currentStep).key"
+                              }
+                            ],
+                            staticClass: "mt-8 p-4"
+                          },
+                          [_vm._m(1)]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value:
+                                  "confirm" ===
+                                  _vm.steps.find(function(s, i) {
+                                    return i === _vm.currentStep
+                                  }).key,
+                                expression:
+                                  "'confirm' === steps.find((s, i) => i === currentStep).key"
+                              }
+                            ],
+                            staticClass: "mt-8 p-4"
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Confirm step\n                            "
+                            )
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "mt-8 p-4" }, [
+                          _c("div", { staticClass: "flex p-2 mt-4" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass:
+                                  "text-base hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                       hover:bg-gray-200\n                                                       bg-gray-100\n                                                       text-gray-700\n                                                       border duration-200 ease-in-out\n                                                       border-gray-600 transition",
+                                on: { click: _vm.prev }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                        Previous\n                                    "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "flex-auto flex flex-row-reverse"
+                              },
+                              [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "text-base  ml-2  hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                        hover:bg-teal-600\n                                                        bg-teal-600\n                                                        text-teal-100\n                                                        border duration-200 ease-in-out\n                                                        border-teal-600 transition",
+                                    on: { click: _vm.next }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                            Next\n                                        "
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ])
+                        ])
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ])
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("div", { staticClass: "flex flex-col md:flex-row" }, [
+        _c("div", { staticClass: "w-full mx-2 flex-1 svelte-1l8159u" }, [
+          _c(
+            "div",
+            {
+              staticClass:
+                "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
+            },
+            [
+              _vm._v(
+                "\n                                                Username\n                                            "
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              staticClass:
+                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+            },
+            [
+              _c("input", {
+                staticClass:
+                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+                attrs: { placeholder: "Just a hint.." }
+              })
+            ]
+          )
+        ])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("div", { staticClass: "w-full mx-2 flex-1 svelte-1l8159u" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
+          },
+          [
+            _vm._v(
+              "\n                                            Your Email\n                                        "
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+          },
+          [
+            _c("input", {
+              staticClass:
+                "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+              attrs: { placeholder: "jhon@doe.com" }
+            })
+          ]
+        )
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Jetstream/ActionMessage.vue?vue&type=template&id=bcb26626&":
 /*!***************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Jetstream/ActionMessage.vue?vue&type=template&id=bcb26626& ***!
@@ -47509,406 +47969,7 @@ var render = function() {
     },
     [
       _vm._v(" "),
-      _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
-          _c(
-            "div",
-            { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
-            [
-              _c("div", { staticClass: "flex flex-col" }, [
-                _c(
-                  "div",
-                  { staticClass: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" },
-                  [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
-                      },
-                      [
-                        _c(
-                          "div",
-                          {
-                            staticClass:
-                              "shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
-                          },
-                          [
-                            _c("div", { staticClass: "mx-4 p-4" }, [
-                              _c(
-                                "div",
-                                { staticClass: "flex items-center" },
-                                [
-                                  _vm._l(_vm.steps, function(step, index) {
-                                    return [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "flex items-center text-teal-600 relative"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              class: {
-                                                "rounded-full": true,
-                                                "text-center": true,
-                                                transition: true,
-                                                "duration-500": true,
-                                                "ease-in-out": true,
-                                                "h-12": true,
-                                                "w-12": true,
-                                                "py-3": true,
-                                                "border-2": true,
-                                                "border-teal-600": true,
-                                                "bg-teal-600":
-                                                  _vm.currentStep === index,
-                                                "text-white":
-                                                  _vm.currentStep === index
-                                              }
-                                            },
-                                            [
-                                              _vm._v(
-                                                "\n                                                    " +
-                                                  _vm._s(index + 1) +
-                                                  "\n                                                "
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-teal-600"
-                                            },
-                                            [
-                                              _vm._v(
-                                                "\n                                                    " +
-                                                  _vm._s(step.title) +
-                                                  "\n                                                "
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c("div", {
-                                        staticClass:
-                                          "flex-auto border-t-2 transition duration-500 ease-in-out border-gray-300"
-                                      })
-                                    ]
-                                  })
-                                ],
-                                2
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value:
-                                      "upload_file" ===
-                                      _vm.steps.find(function(s, i) {
-                                        return i === _vm.currentStep
-                                      }).key,
-                                    expression:
-                                      "'upload_file' === steps.find((s, i) => i === currentStep).key"
-                                  }
-                                ],
-                                staticClass: "mt-8 p-4"
-                              },
-                              [
-                                _c("div", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "font-bold text-gray-600 text-xs leading-8 uppercase h-6 mx-2 mt-3"
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n                                            Full Name\n                                        "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "flex flex-col md:flex-row"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "w-full flex-1 mx-2 svelte-1l8159u"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
-                                            },
-                                            [
-                                              _c("input", {
-                                                staticClass:
-                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-                                                attrs: {
-                                                  placeholder: "First Name"
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "w-full flex-1 mx-2 svelte-1l8159u"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
-                                            },
-                                            [
-                                              _c("input", {
-                                                staticClass:
-                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-                                                attrs: {
-                                                  placeholder: "Last Name"
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value:
-                                      "map_fields" ===
-                                      _vm.steps.find(function(s, i) {
-                                        return i === _vm.currentStep
-                                      }).key,
-                                    expression:
-                                      "'map_fields' === steps.find((s, i) => i === currentStep).key"
-                                  }
-                                ],
-                                staticClass: "mt-8 p-4"
-                              },
-                              [
-                                _c("div", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "flex flex-col md:flex-row"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "w-full mx-2 flex-1 svelte-1l8159u"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
-                                            },
-                                            [
-                                              _vm._v(
-                                                "\n                                                    Username\n                                                "
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
-                                            },
-                                            [
-                                              _c("input", {
-                                                staticClass:
-                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-                                                attrs: {
-                                                  placeholder: "Just a hint.."
-                                                }
-                                              })
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value:
-                                      "replace_strategy" ===
-                                      _vm.steps.find(function(s, i) {
-                                        return i === _vm.currentStep
-                                      }).key,
-                                    expression:
-                                      "'replace_strategy' === steps.find((s, i) => i === currentStep).key"
-                                  }
-                                ],
-                                staticClass: "mt-8 p-4"
-                              },
-                              [
-                                _c("div", [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "w-full mx-2 flex-1 svelte-1l8159u"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                                Your Email\n                                            "
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
-                                        },
-                                        [
-                                          _c("input", {
-                                            staticClass:
-                                              "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-                                            attrs: {
-                                              placeholder: "jhon@doe.com"
-                                            }
-                                          })
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ])
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value:
-                                      "confirm" ===
-                                      _vm.steps.find(function(s, i) {
-                                        return i === _vm.currentStep
-                                      }).key,
-                                    expression:
-                                      "'confirm' === steps.find((s, i) => i === currentStep).key"
-                                  }
-                                ],
-                                staticClass: "mt-8 p-4"
-                              },
-                              [
-                                _vm._v(
-                                  "\n                                    Confirm step\n                                "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "mt-8 p-4" }, [
-                              _c("div", { staticClass: "flex p-2 mt-4" }, [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "text-base hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                       hover:bg-gray-200\n                                                       bg-gray-100\n                                                       text-gray-700\n                                                       border duration-200 ease-in-out\n                                                       border-gray-600 transition",
-                                    on: { click: _vm.prev }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                            Previous\n                                        "
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "flex-auto flex flex-row-reverse"
-                                  },
-                                  [
-                                    _c(
-                                      "button",
-                                      {
-                                        staticClass:
-                                          "text-base  ml-2  hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                        hover:bg-teal-600\n                                                        bg-teal-600\n                                                        text-teal-100\n                                                        border duration-200 ease-in-out\n                                                        border-teal-600 transition",
-                                        on: { click: _vm.next }
-                                      },
-                                      [
-                                        _vm._v(
-                                          "\n                                                Next\n                                            "
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              ])
-                            ])
-                          ]
-                        )
-                      ]
-                    )
-                  ]
-                )
-              ])
-            ]
-          )
-        ])
-      ]),
+      _c("contact-upload-form"),
       _vm._v(" "),
       _c("div", { staticClass: "py-12" }, [
         _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
@@ -48191,7 +48252,8 @@ var render = function() {
           )
         ])
       ])
-    ]
+    ],
+    1
   )
 }
 var staticRenderFns = []
@@ -61703,6 +61765,75 @@ module.exports = function(module) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "./resources/js/Components/ContactsUploadForm.vue":
+/*!********************************************************!*\
+  !*** ./resources/js/Components/ContactsUploadForm.vue ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ContactsUploadForm.vue?vue&type=template&id=0a44f4a3& */ "./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3&");
+/* harmony import */ var _ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ContactsUploadForm.vue?vue&type=script&lang=js& */ "./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Components/ContactsUploadForm.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ContactsUploadForm.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3& ***!
+  \***************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./ContactsUploadForm.vue?vue&type=template&id=0a44f4a3& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
