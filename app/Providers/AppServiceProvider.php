@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ContactService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        /**
+         * Register contact service.
+         */
+        $this->app->singleton(ContactService::class);
     }
 
     /**
