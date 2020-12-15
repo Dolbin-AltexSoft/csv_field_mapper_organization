@@ -3342,7 +3342,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout */ "./resources/js/Layouts/AppLayout.vue");
-/* harmony import */ var _Jetstream_Welcome__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/Welcome */ "./resources/js/Jetstream/Welcome.vue");
 //
 //
 //
@@ -3431,17 +3430,183 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
-    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"],
-    Welcome: _Jetstream_Welcome__WEBPACK_IMPORTED_MODULE_1__["default"]
+    AppLayout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
     contacts: {
-      type: Object,
+      type: Array,
       "default": []
+    }
+  },
+  data: function data() {
+    return {
+      currentStep: 0
+    };
+  },
+  computed: {
+    steps: function steps() {
+      return [{
+        key: 'upload_file',
+        title: 'Upload file'
+      }, {
+        key: 'map_fields',
+        title: 'Map Fields'
+      }, {
+        key: 'replace_strategy',
+        title: 'Replace Strategy'
+      }, {
+        key: 'confirm',
+        title: 'Confirm'
+      }];
+    }
+  },
+  methods: {
+    next: function next() {
+      this.currentStep += this.currentStep === this.steps.length - 1 ? 0 : 1;
+    },
+    prev: function prev() {
+      this.currentStep -= this.currentStep === 0 ? 0 : 1;
     }
   }
 });
@@ -47343,6 +47508,407 @@ var render = function() {
       ])
     },
     [
+      _vm._v(" "),
+      _c("div", { staticClass: "py-12" }, [
+        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+          _c(
+            "div",
+            { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
+            [
+              _c("div", { staticClass: "flex flex-col" }, [
+                _c(
+                  "div",
+                  { staticClass: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" },
+                  [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+                      },
+                      [
+                        _c(
+                          "div",
+                          {
+                            staticClass:
+                              "shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+                          },
+                          [
+                            _c("div", { staticClass: "mx-4 p-4" }, [
+                              _c(
+                                "div",
+                                { staticClass: "flex items-center" },
+                                [
+                                  _vm._l(_vm.steps, function(step, index) {
+                                    return [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "flex items-center text-teal-600 relative"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              class: {
+                                                "rounded-full": true,
+                                                "text-center": true,
+                                                transition: true,
+                                                "duration-500": true,
+                                                "ease-in-out": true,
+                                                "h-12": true,
+                                                "w-12": true,
+                                                "py-3": true,
+                                                "border-2": true,
+                                                "border-teal-600": true,
+                                                "bg-teal-600":
+                                                  _vm.currentStep === index,
+                                                "text-white":
+                                                  _vm.currentStep === index
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                                    " +
+                                                  _vm._s(index + 1) +
+                                                  "\n                                                "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-teal-600"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                                    " +
+                                                  _vm._s(step.title) +
+                                                  "\n                                                "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("div", {
+                                        staticClass:
+                                          "flex-auto border-t-2 transition duration-500 ease-in-out border-gray-300"
+                                      })
+                                    ]
+                                  })
+                                ],
+                                2
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value:
+                                      "upload_file" ===
+                                      _vm.steps.find(function(s, i) {
+                                        return i === _vm.currentStep
+                                      }).key,
+                                    expression:
+                                      "'upload_file' === steps.find((s, i) => i === currentStep).key"
+                                  }
+                                ],
+                                staticClass: "mt-8 p-4"
+                              },
+                              [
+                                _c("div", [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "font-bold text-gray-600 text-xs leading-8 uppercase h-6 mx-2 mt-3"
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                            Full Name\n                                        "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "flex flex-col md:flex-row"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "w-full flex-1 mx-2 svelte-1l8159u"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+                                            },
+                                            [
+                                              _c("input", {
+                                                staticClass:
+                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+                                                attrs: {
+                                                  placeholder: "First Name"
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "w-full flex-1 mx-2 svelte-1l8159u"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+                                            },
+                                            [
+                                              _c("input", {
+                                                staticClass:
+                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+                                                attrs: {
+                                                  placeholder: "Last Name"
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value:
+                                      "map_fields" ===
+                                      _vm.steps.find(function(s, i) {
+                                        return i === _vm.currentStep
+                                      }).key,
+                                    expression:
+                                      "'map_fields' === steps.find((s, i) => i === currentStep).key"
+                                  }
+                                ],
+                                staticClass: "mt-8 p-4"
+                              },
+                              [
+                                _c("div", [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "flex flex-col md:flex-row"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "w-full mx-2 flex-1 svelte-1l8159u"
+                                        },
+                                        [
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                                    Username\n                                                "
+                                              )
+                                            ]
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "div",
+                                            {
+                                              staticClass:
+                                                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+                                            },
+                                            [
+                                              _c("input", {
+                                                staticClass:
+                                                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+                                                attrs: {
+                                                  placeholder: "Just a hint.."
+                                                }
+                                              })
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value:
+                                      "replace_strategy" ===
+                                      _vm.steps.find(function(s, i) {
+                                        return i === _vm.currentStep
+                                      }).key,
+                                    expression:
+                                      "'replace_strategy' === steps.find((s, i) => i === currentStep).key"
+                                  }
+                                ],
+                                staticClass: "mt-8 p-4"
+                              },
+                              [
+                                _c("div", [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "w-full mx-2 flex-1 svelte-1l8159u"
+                                    },
+                                    [
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                                Your Email\n                                            "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+                                        },
+                                        [
+                                          _c("input", {
+                                            staticClass:
+                                              "p-1 px-2 appearance-none outline-none w-full text-gray-800",
+                                            attrs: {
+                                              placeholder: "jhon@doe.com"
+                                            }
+                                          })
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ])
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value:
+                                      "confirm" ===
+                                      _vm.steps.find(function(s, i) {
+                                        return i === _vm.currentStep
+                                      }).key,
+                                    expression:
+                                      "'confirm' === steps.find((s, i) => i === currentStep).key"
+                                  }
+                                ],
+                                staticClass: "mt-8 p-4"
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                    Confirm step\n                                "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "mt-8 p-4" }, [
+                              _c("div", { staticClass: "flex p-2 mt-4" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "text-base hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                       hover:bg-gray-200\n                                                       bg-gray-100\n                                                       text-gray-700\n                                                       border duration-200 ease-in-out\n                                                       border-gray-600 transition",
+                                    on: { click: _vm.prev }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                            Previous\n                                        "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "flex-auto flex flex-row-reverse"
+                                  },
+                                  [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass:
+                                          "text-base  ml-2  hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                        hover:bg-teal-600\n                                                        bg-teal-600\n                                                        text-teal-100\n                                                        border duration-200 ease-in-out\n                                                        border-teal-600 transition",
+                                        on: { click: _vm.next }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                                Next\n                                            "
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ])
+                            ])
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ])
+            ]
+          )
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "py-12" }, [
         _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
