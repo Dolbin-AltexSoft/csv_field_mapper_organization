@@ -27,3 +27,7 @@ Route::middleware(['auth:sanctum', 'verified'])
 Route::middleware(['auth:sanctum', 'verified'])
     ->post('/import/parse-contacts', 'ImportController@parseContacts')
     ->name('parse_contacts');
+
+Route::middleware(['auth:sanctum', 'verified'])
+    ->post('/import/import-contacts', 'ImportController@importContacts')
+    ->name('import_contacts');

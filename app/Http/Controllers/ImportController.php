@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Requests\FileImportRequest;
 use App\Services\ContactService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -13,20 +14,31 @@ use Throwable;
 class ImportController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
+    public $errorMessage = 'We could not parse contacts. Please try again or contact administrator.';
     /**
      * Parse contacts from file.
      *
-     * @param  Request  $request
+     * @param  FileImportRequest  $request
      * @param  ContactService  $contactService
      * @return JsonResponse
      */
-    public function parseContacts(Request $request, ContactService $contactService)
+    public function parseContacts(FileImportRequest $request, ContactService $contactService)
     {
-        $file = $request->file('file');
-        $file_data = $contactService->parseContacts($file);
-
-        return response()->json($file_data);
+        try {
+            $file = $request->file('file');
+            $file_data = $contactService->parseContacts($file);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Ok',
+                'data' => $file_data
+            ]);
+        } catch (\Exception $exception){
+            return response()->json([
+                'status' => 'error',
+                'message' => $this->errorMessage,
+                'data' => []
+            ], 500)->withException($exception);
+        }
     }
 
     /**
@@ -43,12 +55,15 @@ class ImportController extends Controller
         try {
             $contactService->importContacts($data);
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Ok',
+                'data' => []
             ]);
         } catch (\Exception $exception) {
             return response()->json([
                 'status' => 'error',
-                'message' => $exception->getMessage()
+                'message' => $this->errorMessage,
+                'data' => []
             ], 500)->withException($exception);
         }
     }
