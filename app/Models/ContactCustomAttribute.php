@@ -10,6 +10,10 @@ class ContactCustomAttribute extends Model
     use HasFactory;
 
     public $timestamps = false;
+    public $fillable = [
+      'key',
+      'value'
+    ];
 
     public function contact()
     {

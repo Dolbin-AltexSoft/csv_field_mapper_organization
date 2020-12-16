@@ -4,11 +4,12 @@ namespace App\Services;
 
 use App\Models\Contact;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Traits\EnumeratesValues;
 use Throwable;
 
 class ContactService
 {
-
     /**
      * Parse contacts from file.
      *
@@ -23,15 +24,21 @@ class ContactService
         $headers = [];
         $contacts_data = [];
         if (count($file_data) > 0) {
+            $values = array_slice($file_data, 1);
             foreach ($file_data[0] as $key => $value) {
                 $headers[] = $value;
             }
-            $contacts_data = array_slice($file_data, 1);
+            foreach ($values as $key => $value) {
+                $contacts_data[$key] = [];
+                foreach ($value as $header_key => $item) {
+                    $contacts_data[$key][$headers[$header_key]] = $item;
+                }
+            }
         }
 
         return [
-            'headers' => $headers,
-            'contacts' => $contacts_data
+            'contactsHeaders' => $headers,
+            'contactsData' => $contacts_data,
         ];
     }
 
@@ -43,13 +50,29 @@ class ContactService
      */
     public function importContacts($data = [])
     {
-        foreach ($data as $contact) {
+        foreach ($data as $item) {
             /**
              * @var $contact Contact
              */
-            $contact = (new Contact)->saveOrFail($contact['fields']);
-            $contact->customAttributes()->create($contact['custom_attributes']);
-
+            $contact = Contact::create($item['fields']);
+            foreach ($item['custom_attributes'] as $attribute) {
+                $contact->customAttributes()->create($attribute);
+            }
         }
+    }
+
+    /**
+     * Get list of fields of Contact model.
+     *
+     * @return array
+     */
+    public function getContactFields()
+    {
+        $contact = new Contact();
+        $table = $contact->getTable();
+
+        return array_values(array_filter(Schema::getColumnListing($table), function ($column) {
+            return $column !== 'id' && $column !== 'created_at' && $column !== 'updated_at';
+        }));
     }
 }
