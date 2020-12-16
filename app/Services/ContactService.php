@@ -2,14 +2,16 @@
 
 namespace App\Services;
 
-
 use App\Models\Contact;
 use Illuminate\Http\UploadedFile;
+use Throwable;
 
 class ContactService
 {
 
     /**
+     * Parse contacts from file.
+     *
      * @param  UploadedFile  $file
      * @return array
      */
@@ -34,8 +36,10 @@ class ContactService
     }
 
     /**
+     * Import contacts.
+     *
      * @param  array  $data
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function importContacts($data = [])
     {
