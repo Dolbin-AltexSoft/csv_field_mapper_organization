@@ -3,7 +3,7 @@ This is an example laravel application to show base of importing documents in la
 
 ## Installation
 - The first step is to install docker and docker-compose - https://docs.docker.com/get-docker/
-- The second step is to run following commands:
+- The second step is to copy .env.bak to .env and run following commands:
     - ```
       docker run --rm \
            -v $(pwd):/opt \
