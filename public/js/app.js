@@ -1934,7 +1934,88 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var _Jetstream_Dropdown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/Dropdown */ "./resources/js/Jetstream/Dropdown.vue");
+/* harmony import */ var _Jetstream_DropdownLink__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/Jetstream/DropdownLink */ "./resources/js/Jetstream/DropdownLink.vue");
+/* harmony import */ var _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Button */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @inertiajs/inertia */ "./node_modules/@inertiajs/inertia/dist/index.js");
+/* harmony import */ var _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _Components_Loading__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/Loading */ "./resources/js/Components/Loading.vue");
+/* harmony import */ var _Components_ErrorBag__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/ErrorBag */ "./resources/js/Components/ErrorBag.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2077,59 +2158,239 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
+
+
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ContactUploadForm',
   components: {
-    Button: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ErrorBag: _Components_ErrorBag__WEBPACK_IMPORTED_MODULE_5__["default"],
+    Loading: _Components_Loading__WEBPACK_IMPORTED_MODULE_4__["default"],
+    JetDropdown: _Jetstream_Dropdown__WEBPACK_IMPORTED_MODULE_0__["default"],
+    JetDropdownLink: _Jetstream_DropdownLink__WEBPACK_IMPORTED_MODULE_1__["default"],
+    Button: _Jetstream_Button__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  props: {
+    fieldsList: {
+      type: Array,
+      "default": []
+    }
   },
   data: function data() {
     return {
       currentStep: 0,
+      isLoading: false,
       form: {
-        file: null
-      }
+        file: null,
+        contactsHeaders: [],
+        contactsData: [],
+        mappedFields: [],
+        mappedData: []
+      },
+      successImportMessage: '',
+      errors: []
     };
   },
   computed: {
     steps: function steps() {
       return [{
         key: 'upload_file',
-        title: 'Upload file'
+        title: 'Upload file',
+        callback: this.upload,
+        flex: 1
       }, {
         key: 'map_fields',
-        title: 'Map Fields'
-      }, {
-        key: 'replace_strategy',
-        title: 'Replace Strategy'
+        title: 'Map Fields',
+        callback: function callback() {
+          return new Promise(function (res) {
+            return res(true);
+          });
+        },
+        flex: 1
       }, {
         key: 'confirm',
-        title: 'Confirm'
+        title: 'Confirm',
+        callback: this.confirm,
+        flex: 3
       }];
     }
   },
   methods: {
+    setField: function setField(header, field) {
+      this.form.mappedFields = this.form.mappedFields.filter(function (mf) {
+        return mf.field !== header;
+      });
+      this.form.mappedFields.push({
+        field: header,
+        mapTo: field
+      });
+    },
     preUpload: function preUpload($event) {
       console.log($event);
       this.form.file = $event.target.files[0];
+      this.$refs.file.value = null;
     },
     upload: function upload() {
-      var formData = new FormData();
-      formData.append('file', this.form.file);
-      return axios.post('/import/parse-contacts', formData);
-    },
-    next: function next() {
       var _this = this;
 
-      this.upload().then(function (res) {
-        _this.currentStep += _this.currentStep === _this.steps.length - 1 ? 0 : 1;
+      var formData = new FormData();
+      formData.append('file', this.form.file);
+      this.isLoading = true;
+      return axios.post('/import/parse-contacts', formData).then(function (res) {
+        _this.form.contactsHeaders = res.data.data.contactsHeaders;
+        _this.form.contactsData = res.data.data.contactsData;
+        _this.form.mappedFields = _this.form.contactsHeaders.map(function (h) {
+          return {
+            field: h,
+            mapTo: null
+          };
+        });
+        _this.isLoading = false;
       })["catch"](function (e) {
-        console.log(e);
+        throw e;
+      });
+    },
+    confirm: function confirm() {
+      var _this2 = this;
+
+      this.successImportMessage = '';
+      this.isLoading = true;
+      this.form.mappedData = [];
+      var fields = this.form.mappedFields.filter(function (mf) {
+        return mf.mapTo !== null;
+      });
+      var custom_attributes = this.form.mappedFields.filter(function (mf) {
+        return mf.mapTo === null;
+      });
+      this.form.contactsData.forEach(function (cdk) {
+        var mapped_fields = {};
+        var mapped_custom_attributes = [];
+        Object.keys(cdk).forEach(function (cif) {
+          var field = fields.find(function (f) {
+            return f.field === cif;
+          });
+          var custom_attribute = custom_attributes.find(function (f) {
+            return f.field === cif;
+          });
+          console.log(field, custom_attribute);
+
+          if (field) {
+            mapped_fields[field.mapTo] = cdk[cif];
+          } else if (custom_attribute) {
+            if (cdk[cif]) {
+              mapped_custom_attributes.push({
+                key: custom_attribute.field,
+                value: cdk[cif]
+              });
+            }
+          }
+        });
+
+        _this2.form.mappedData.push({
+          fields: mapped_fields,
+          custom_attributes: mapped_custom_attributes
+        });
+      });
+      return axios.post('/import/import-contacts', this.form.mappedData).then(function () {
+        _this2.isLoading = false;
+        _this2.successImportMessage = 'Contacts are successfully imported.';
+        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__["Inertia"].visit('contacts', {
+          only: ['contacts']
+        });
+      })["catch"](function (e) {
+        throw e;
+      });
+    },
+    next: function next() {
+      var _this3 = this;
+
+      this.errors = [];
+      this.steps[this.currentStep].callback().then(function () {
+        _this3.currentStep += _this3.currentStep === _this3.steps.length - 1 ? 0 : 1;
+      })["catch"](function (e) {
+        _this3.isLoading = false;
+
+        if (e.response && e.response.data && e.response.data.message) {
+          _this3.errors.push(e.response.data.message);
+        } else if (e.message) {
+          _this3.errors.push(e.message);
+        } else {
+          _this3.errors.push('Internal error. Please contact administrator.');
+        }
       });
     },
     prev: function prev() {
+      this.errors = [];
       this.currentStep -= this.currentStep === 0 ? 0 : 1;
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'ErrorBag',
+  props: ['message']
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/Loading.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/Loading.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'Loading'
 });
 
 /***/ }),
@@ -3644,6 +3905,72 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3655,7 +3982,16 @@ __webpack_require__.r(__webpack_exports__);
     contacts: {
       type: Array,
       "default": []
+    },
+    fieldsList: {
+      type: Array,
+      "default": []
     }
+  },
+  data: function data() {
+    return {
+      showUploadForm: false
+    };
   }
 });
 
@@ -44862,138 +45198,537 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "py-12" }, [
     _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
-      _c(
-        "div",
-        { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
-        [
-          _c("div", { staticClass: "flex flex-col" }, [
-            _c(
-              "div",
-              { staticClass: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" },
-              [
-                _c(
-                  "div",
-                  {
-                    staticClass:
-                      "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
-                  },
-                  [
-                    _c(
-                      "div",
-                      {
-                        staticClass:
-                          "shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
-                      },
-                      [
-                        _c("div", { staticClass: "mx-4 p-4" }, [
-                          _c(
-                            "div",
-                            { staticClass: "flex items-center" },
-                            [
-                              _vm._l(_vm.steps, function(step, index) {
-                                return [
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass:
-                                        "flex items-center text-teal-600 relative"
-                                    },
-                                    [
-                                      _c(
-                                        "div",
-                                        {
-                                          class: {
-                                            "rounded-full": true,
-                                            "text-center": true,
-                                            transition: true,
-                                            "duration-500": true,
-                                            "ease-in-out": true,
-                                            "h-12": true,
-                                            "w-12": true,
-                                            "py-3": true,
-                                            "border-2": true,
-                                            "border-teal-600": true,
-                                            "bg-teal-600":
-                                              _vm.currentStep === index,
-                                            "text-white":
-                                              _vm.currentStep === index
-                                          }
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                                " +
-                                              _vm._s(index + 1) +
-                                              "\n                                            "
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-teal-600"
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                                " +
-                                              _vm._s(step.title) +
-                                              "\n                                            "
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c("div", {
-                                    staticClass:
-                                      "flex-auto border-t-2 transition duration-500 ease-in-out border-gray-300"
-                                  })
-                                ]
-                              })
-                            ],
-                            2
-                          )
-                        ]),
-                        _vm._v(" "),
+      _c("div", { staticClass: "bg-white shadow-xl sm:rounded-lg" }, [
+        _c("div", { staticClass: "flex flex-col" }, [
+          _c(
+            "div",
+            { staticClass: "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" },
+            [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+                },
+                [
+                  _vm.errors.length
+                    ? _c(
+                        "div",
+                        {
+                          staticClass:
+                            "shadow border-b border-gray-200 sm:rounded-lg"
+                        },
+                        [
+                          _vm._l(_vm.errors, function(error) {
+                            return [
+                              _c("error-bag", { attrs: { message: error } })
+                            ]
+                          })
+                        ],
+                        2
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "shadow border-b border-gray-200 sm:rounded-lg"
+                    },
+                    [
+                      _c("div", { staticClass: "mx-4 p-4" }, [
                         _c(
                           "div",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value:
-                                  "upload_file" ===
-                                  _vm.steps.find(function(s, i) {
-                                    return i === _vm.currentStep
-                                  }).key,
-                                expression:
-                                  "'upload_file' === steps.find((s, i) => i === currentStep).key"
-                              }
-                            ],
-                            staticClass: "mt-8 p-4"
-                          },
+                          { staticClass: "flex items-center" },
                           [
-                            _c("div", [
-                              _c(
-                                "label",
-                                {
-                                  staticClass:
-                                    "block text-sm font-medium text-gray-700"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                                        Upload contacts\n                                    "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
+                            _vm._l(_vm.steps, function(step, index) {
+                              return [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass:
+                                      "flex items-center text-teal-600 relative"
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      {
+                                        class: {
+                                          "rounded-full": true,
+                                          "text-center": true,
+                                          transition: true,
+                                          "duration-500": true,
+                                          "ease-in-out": true,
+                                          "h-12": true,
+                                          "w-12": true,
+                                          "py-3": true,
+                                          "border-2": true,
+                                          "border-teal-600": true,
+                                          "bg-teal-600":
+                                            _vm.currentStep === index,
+                                          "text-white":
+                                            _vm.currentStep === index
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                                " +
+                                            _vm._s(index + 1) +
+                                            "\n                                            "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "absolute top-0 -ml-10 text-center mt-16 w-32 text-xs font-medium uppercase text-teal-600"
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                                " +
+                                            _vm._s(step.title) +
+                                            "\n                                            "
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("div", {
+                                  class:
+                                    "flex-" +
+                                    step.flex +
+                                    " border-t-2 transition duration-500 ease-in-out border-gray-300"
+                                })
+                              ]
+                            })
+                          ],
+                          2
+                        )
+                      ]),
+                      _vm._v(" "),
+                      "upload_file" ===
+                      _vm.steps.find(function(s, i) {
+                        return i === _vm.currentStep
+                      }).key
+                        ? _c("div", { staticClass: "mt-8 p-4" }, [
+                            _c(
+                              "div",
+                              [
+                                _c(
+                                  "div",
+                                  {
+                                    directives: [
+                                      {
+                                        name: "show",
+                                        rawName: "v-show",
+                                        value: !_vm.isLoading,
+                                        expression: "!isLoading"
+                                      }
+                                    ],
+                                    staticClass:
+                                      "mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                                  },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "space-y-1 text-center" },
+                                      [
+                                        _c(
+                                          "div",
+                                          {
+                                            staticClass:
+                                              "flex text-sm text-gray-600"
+                                          },
+                                          [
+                                            _c(
+                                              "label",
+                                              {
+                                                staticClass:
+                                                  "relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500",
+                                                attrs: { for: "file-upload" }
+                                              },
+                                              [
+                                                _c(
+                                                  "span",
+                                                  {
+                                                    staticClass:
+                                                      "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer hover:bg-teal-600 bg-teal-600 text-teal-100 border duration-200 ease-in-out border-teal-600 transition"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                                                        " +
+                                                        _vm._s(
+                                                          _vm.form.file
+                                                            ? "Replace the file"
+                                                            : "Upload a file"
+                                                        ) +
+                                                        "\n                                                    "
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c("input", {
+                                                  ref: "file",
+                                                  staticClass: "sr-only",
+                                                  attrs: {
+                                                    id: "file-upload",
+                                                    name: "file-upload",
+                                                    type: "file"
+                                                  },
+                                                  on: { change: _vm.preUpload }
+                                                })
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "p",
+                                          {
+                                            staticClass: "text-xs text-gray-500"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                                CSV up to 10MB\n                                            "
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("loading", {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value: _vm.isLoading,
+                                      expression: "isLoading"
+                                    }
+                                  ]
+                                })
+                              ],
+                              1
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      "map_fields" ===
+                      _vm.steps.find(function(s, i) {
+                        return i === _vm.currentStep
+                      }).key
+                        ? _c("div", { staticClass: "mt-8 p-4" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "shadow border-b border-gray-200 sm:rounded-lg"
+                              },
+                              [
+                                _c(
+                                  "table",
+                                  {
+                                    staticClass:
+                                      "min-w-full divide-y divide-gray-200"
+                                  },
+                                  [
+                                    _vm._m(0),
+                                    _vm._v(" "),
+                                    _c(
+                                      "tbody",
+                                      { staticClass: "bg-gray-50" },
+                                      _vm._l(_vm.form.contactsHeaders, function(
+                                        header
+                                      ) {
+                                        return _c(
+                                          "tr",
+                                          { key: "headers-" + header },
+                                          [
+                                            _c(
+                                              "td",
+                                              {
+                                                staticClass:
+                                                  "px-6 py-4 whitespace-nowrap"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "text-sm text-gray-900"
+                                                  },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                                                    " +
+                                                        _vm._s(header) +
+                                                        "\n                                                "
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            _c(
+                                              "td",
+                                              {
+                                                staticClass:
+                                                  "px-6 py-4 whitespace-nowrap"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  {
+                                                    staticClass:
+                                                      "flex sm:flex sm:items-center sm:ml-6"
+                                                  },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "ml-3 relative"
+                                                      },
+                                                      [
+                                                        _c("jet-dropdown", {
+                                                          attrs: {
+                                                            align: "right",
+                                                            width: "48"
+                                                          },
+                                                          scopedSlots: _vm._u(
+                                                            [
+                                                              {
+                                                                key: "trigger",
+                                                                fn: function() {
+                                                                  return [
+                                                                    _c(
+                                                                      "button",
+                                                                      {
+                                                                        staticClass:
+                                                                          "flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out"
+                                                                      },
+                                                                      [
+                                                                        _c(
+                                                                          "div",
+                                                                          [
+                                                                            _vm._v(
+                                                                              _vm._s(
+                                                                                (_vm.form.mappedFields.find(
+                                                                                  function(
+                                                                                    f
+                                                                                  ) {
+                                                                                    return (
+                                                                                      f.field ===
+                                                                                      header
+                                                                                    )
+                                                                                  }
+                                                                                ) &&
+                                                                                  _vm.form.mappedFields.find(
+                                                                                    function(
+                                                                                      f
+                                                                                    ) {
+                                                                                      return (
+                                                                                        f.field ===
+                                                                                        header
+                                                                                      )
+                                                                                    }
+                                                                                  )
+                                                                                    .mapTo) ||
+                                                                                  "-Select field-"
+                                                                              ) +
+                                                                                "\n                                                                    "
+                                                                            )
+                                                                          ]
+                                                                        ),
+                                                                        _vm._v(
+                                                                          " "
+                                                                        ),
+                                                                        _c(
+                                                                          "div",
+                                                                          {
+                                                                            staticClass:
+                                                                              "ml-1"
+                                                                          },
+                                                                          [
+                                                                            _c(
+                                                                              "svg",
+                                                                              {
+                                                                                staticClass:
+                                                                                  "fill-current h-4 w-4",
+                                                                                attrs: {
+                                                                                  xmlns:
+                                                                                    "http://www.w3.org/2000/svg",
+                                                                                  viewBox:
+                                                                                    "0 0 20 20"
+                                                                                }
+                                                                              },
+                                                                              [
+                                                                                _c(
+                                                                                  "path",
+                                                                                  {
+                                                                                    attrs: {
+                                                                                      "fill-rule":
+                                                                                        "evenodd",
+                                                                                      d:
+                                                                                        "M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z",
+                                                                                      "clip-rule":
+                                                                                        "evenodd"
+                                                                                    }
+                                                                                  }
+                                                                                )
+                                                                              ]
+                                                                            )
+                                                                          ]
+                                                                        )
+                                                                      ]
+                                                                    )
+                                                                  ]
+                                                                },
+                                                                proxy: true
+                                                              },
+                                                              {
+                                                                key: "content",
+                                                                fn: function() {
+                                                                  return [
+                                                                    [
+                                                                      _c(
+                                                                        "form",
+                                                                        {
+                                                                          key:
+                                                                            "fields-list-clear",
+                                                                          on: {
+                                                                            submit: function(
+                                                                              $event
+                                                                            ) {
+                                                                              $event.preventDefault()
+                                                                              return _vm.setField(
+                                                                                header,
+                                                                                null
+                                                                              )
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        [
+                                                                          _c(
+                                                                            "jet-dropdown-link",
+                                                                            {
+                                                                              attrs: {
+                                                                                as:
+                                                                                  "button"
+                                                                              }
+                                                                            },
+                                                                            [
+                                                                              _vm._v(
+                                                                                "\n                                                                            -Select field-\n                                                                        "
+                                                                              )
+                                                                            ]
+                                                                          )
+                                                                        ],
+                                                                        1
+                                                                      )
+                                                                    ],
+                                                                    _vm._v(" "),
+                                                                    _vm._l(
+                                                                      _vm.fieldsList,
+                                                                      function(
+                                                                        field
+                                                                      ) {
+                                                                        return [
+                                                                          _c(
+                                                                            "form",
+                                                                            {
+                                                                              key:
+                                                                                "fields-list-" +
+                                                                                field,
+                                                                              on: {
+                                                                                submit: function(
+                                                                                  $event
+                                                                                ) {
+                                                                                  $event.preventDefault()
+                                                                                  return _vm.setField(
+                                                                                    header,
+                                                                                    field
+                                                                                  )
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            [
+                                                                              _c(
+                                                                                "jet-dropdown-link",
+                                                                                {
+                                                                                  attrs: {
+                                                                                    as:
+                                                                                      "button"
+                                                                                  }
+                                                                                },
+                                                                                [
+                                                                                  _vm._v(
+                                                                                    "\n                                                                            " +
+                                                                                      _vm._s(
+                                                                                        field
+                                                                                      ) +
+                                                                                      "\n                                                                        "
+                                                                                  )
+                                                                                ]
+                                                                              )
+                                                                            ],
+                                                                            1
+                                                                          )
+                                                                        ]
+                                                                      }
+                                                                    )
+                                                                  ]
+                                                                },
+                                                                proxy: true
+                                                              }
+                                                            ],
+                                                            null,
+                                                            true
+                                                          )
+                                                        })
+                                                      ],
+                                                      1
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      }),
+                                      0
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      "confirm" ===
+                      _vm.steps.find(function(s, i) {
+                        return i === _vm.currentStep
+                      }).key
+                        ? _c(
+                            "div",
+                            { staticClass: "mt-8 p-4" },
+                            [
                               _c(
                                 "div",
                                 {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value: !_vm.isLoading,
+                                      expression: "!isLoading"
+                                    }
+                                  ],
                                   staticClass:
-                                    "mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"
+                                    "mt-2 flex justify-center px-6 pt-5 pb-6 rounded-md"
                                 },
                                 [
                                   _c(
@@ -45008,170 +45743,109 @@ var render = function() {
                                         },
                                         [
                                           _c(
-                                            "label",
+                                            "div",
                                             {
                                               staticClass:
-                                                "relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500",
-                                              attrs: { for: "file-upload" }
+                                                "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold hover:bg-teal-600 bg-teal-600 text-teal-100 border border-teal-600"
                                             },
                                             [
                                               _c(
                                                 "span",
                                                 {
                                                   staticClass:
-                                                    "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer hover:bg-teal-600 bg-teal-600 text-teal-100 border duration-200 ease-in-out border-teal-600 transition"
+                                                    "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold text-teal-100 border border-teal-600"
                                                 },
-                                                [_vm._v("Upload a file")]
-                                              ),
-                                              _vm._v(" "),
-                                              _c("input", {
-                                                staticClass: "sr-only",
-                                                attrs: {
-                                                  id: "file-upload",
-                                                  name: "file-upload",
-                                                  type: "file"
-                                                },
-                                                on: { change: _vm.preUpload }
-                                              })
+                                                [
+                                                  _vm._v(
+                                                    "\n                                                        " +
+                                                      _vm._s(
+                                                        _vm.successImportMessage
+                                                          ? _vm.successImportMessage
+                                                          : "The data is ready. Click Submit to proceed."
+                                                      ) +
+                                                      "\n                                                    "
+                                                  )
+                                                ]
+                                              )
                                             ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "p",
-                                        {
-                                          staticClass: "text-xs text-gray-500"
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                                CSV up to 10MB\n                                            "
                                           )
                                         ]
                                       )
                                     ]
                                   )
                                 ]
-                              )
-                            ])
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value:
-                                  "map_fields" ===
-                                  _vm.steps.find(function(s, i) {
-                                    return i === _vm.currentStep
-                                  }).key,
-                                expression:
-                                  "'map_fields' === steps.find((s, i) => i === currentStep).key"
-                              }
-                            ],
-                            staticClass: "mt-8 p-4"
-                          },
-                          [_vm._m(0)]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value:
-                                  "replace_strategy" ===
-                                  _vm.steps.find(function(s, i) {
-                                    return i === _vm.currentStep
-                                  }).key,
-                                expression:
-                                  "'replace_strategy' === steps.find((s, i) => i === currentStep).key"
-                              }
-                            ],
-                            staticClass: "mt-8 p-4"
-                          },
-                          [_vm._m(1)]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            directives: [
-                              {
-                                name: "show",
-                                rawName: "v-show",
-                                value:
-                                  "confirm" ===
-                                  _vm.steps.find(function(s, i) {
-                                    return i === _vm.currentStep
-                                  }).key,
-                                expression:
-                                  "'confirm' === steps.find((s, i) => i === currentStep).key"
-                              }
-                            ],
-                            staticClass: "mt-8 p-4"
-                          },
-                          [
-                            _vm._v(
-                              "\n                                Confirm step\n                            "
-                            )
-                          ]
-                        ),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "mt-8 p-4" }, [
-                          _c("div", { staticClass: "flex p-2 mt-4" }, [
-                            _c(
-                              "button",
-                              {
-                                staticClass:
-                                  "text-base hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                       hover:bg-gray-200\n                                                       bg-gray-100\n                                                       text-gray-700\n                                                       border duration-200 ease-in-out\n                                                       border-gray-600 transition",
-                                on: { click: _vm.prev }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                                        Previous\n                                    "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              {
-                                staticClass: "flex-auto flex flex-row-reverse"
-                              },
-                              [
-                                _c(
-                                  "button",
+                              ),
+                              _vm._v(" "),
+                              _c("loading", {
+                                directives: [
                                   {
-                                    staticClass:
-                                      "text-base  ml-2  hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                        hover:bg-teal-600\n                                                        bg-teal-600\n                                                        text-teal-100\n                                                        border duration-200 ease-in-out\n                                                        border-teal-600 transition",
-                                    on: { click: _vm.next }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                                            Next\n                                        "
-                                    )
-                                  ]
-                                )
-                              ]
-                            )
-                          ])
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.isLoading,
+                                    expression: "isLoading"
+                                  }
+                                ]
+                              })
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "mt-8 p-4" }, [
+                        _c("div", { staticClass: "flex p-2 mt-4" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass:
+                                "text-base hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                       hover:bg-gray-200\n                                                       bg-gray-100\n                                                       text-gray-700\n                                                       border duration-200 ease-in-out\n                                                       border-gray-600 transition",
+                              on: { click: _vm.prev }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                        Previous\n                                    "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "flex-auto flex flex-row-reverse" },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass:
+                                    "text-base  ml-2  hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer\n                                                        hover:bg-teal-600\n                                                        bg-teal-600\n                                                        text-teal-100\n                                                        border duration-200 ease-in-out\n                                                        border-teal-600 transition",
+                                  attrs: { disabled: !_vm.form.file },
+                                  on: { click: _vm.next }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                            " +
+                                      _vm._s(
+                                        "confirm" ===
+                                          _vm.steps.find(function(s, i) {
+                                            return i === _vm.currentStep
+                                          }).key
+                                          ? "Submit"
+                                          : "Next"
+                                      ) +
+                                      "\n                                        "
+                                  )
+                                ]
+                              )
+                            ]
+                          )
                         ])
-                      ]
-                    )
-                  ]
-                )
-              ]
-            )
-          ])
-        ]
-      )
+                      ])
+                    ]
+                  )
+                ]
+              )
+            ]
+          )
+        ])
+      ])
     ])
   ])
 }
@@ -45180,75 +45854,154 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("div", { staticClass: "flex flex-col md:flex-row" }, [
-        _c("div", { staticClass: "w-full mx-2 flex-1 svelte-1l8159u" }, [
-          _c(
-            "div",
-            {
-              staticClass:
-                "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
-            },
-            [
-              _vm._v(
-                "\n                                                Username\n                                            "
-              )
-            ]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass:
-                "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
-            },
-            [
-              _c("input", {
-                staticClass:
-                  "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-                attrs: { placeholder: "Just a hint.." }
-              })
-            ]
-          )
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("div", { staticClass: "w-full mx-2 flex-1 svelte-1l8159u" }, [
+    return _c("thead", { staticClass: "bg-gray-50" }, [
+      _c("tr", [
         _c(
-          "div",
+          "th",
           {
             staticClass:
-              "font-bold h-6 mt-3 text-gray-600 text-xs leading-8 uppercase"
+              "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+            attrs: { scope: "col" }
           },
           [
             _vm._v(
-              "\n                                            Your Email\n                                        "
+              "\n                                                File Fields\n                                            "
             )
           ]
         ),
         _vm._v(" "),
         _c(
-          "div",
+          "th",
           {
             staticClass:
-              "bg-white my-2 p-1 flex border border-gray-200 rounded svelte-1l8159u"
+              "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+            attrs: { scope: "col" }
           },
           [
-            _c("input", {
-              staticClass:
-                "p-1 px-2 appearance-none outline-none w-full text-gray-800",
-              attrs: { placeholder: "jhon@doe.com" }
-            })
+            _vm._v(
+              "\n                                                Contact Fields\n                                            "
+            )
           ]
         )
       ])
     ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "mt-2 flex justify-center px-6 pt-5 pb-6 rounded-md" },
+    [
+      _c("div", { staticClass: "space-y-1 text-center" }, [
+        _c("div", { staticClass: "flex text-sm text-gray-600" }, [
+          _c(
+            "div",
+            {
+              staticClass:
+                "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold hover:bg-red-600 bg-red-600 text-red-100 border border-red-600"
+            },
+            [
+              _c(
+                "span",
+                {
+                  staticClass:
+                    "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold text-red-100 border border-red-600"
+                },
+                [
+                  _vm._v(
+                    "\n                                                        " +
+                      _vm._s(_vm.message) +
+                      "\n                                                    "
+                  )
+                ]
+              )
+            ]
+          )
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true& ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "mt-2 flex justify-center px-6 pt-5 pb-6 rounded-md" },
+      [
+        _c("div", { staticClass: "space-y-1 text-center" }, [
+          _c("div", { staticClass: "flex text-sm text-gray-600" }, [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold hover:bg-teal-600 bg-teal-600 text-teal-100 border border-teal-600"
+              },
+              [
+                _c(
+                  "span",
+                  {
+                    staticClass:
+                      "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold text-teal-100 border border-teal-600"
+                  },
+                  [
+                    _vm._v(
+                      "\n                                                        We are processing data. Please wait.\n                                                    "
+                    )
+                  ]
+                )
+              ]
+            )
+          ])
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -47960,7 +48713,23 @@ var render = function() {
                     "font-semibold text-xl text-gray-800 leading-tight"
                 },
                 [_vm._v("\n            Contacts\n        ")]
-              )
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "flex-auto flex flex-row-reverse" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold cursor-pointer hover:bg-teal-600 bg-teal-600 text-teal-100 border duration-200 ease-in-out border-teal-600 transition",
+                    on: {
+                      click: function($event) {
+                        _vm.showUploadForm = !_vm.showUploadForm
+                      }
+                    }
+                  },
+                  [_vm._v("\n                Upload Contacts\n            ")]
+                )
+              ])
             ]
           },
           proxy: true
@@ -47969,10 +48738,14 @@ var render = function() {
     },
     [
       _vm._v(" "),
-      _c("contact-upload-form"),
+      _vm.showUploadForm
+        ? _c("contact-upload-form", {
+            attrs: { "fields-list": _vm.fieldsList }
+          })
+        : _vm._e(),
       _vm._v(" "),
       _c("div", { staticClass: "py-12" }, [
-        _c("div", { staticClass: "max-w-7xl mx-auto sm:px-6 lg:px-8" }, [
+        _c("div", { staticClass: "max-w-12xl mx-auto sm:px-6 lg:px-8" }, [
           _c(
             "div",
             { staticClass: "bg-white overflow-hidden shadow-xl sm:rounded-lg" },
@@ -48014,6 +48787,34 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
+                                          "\n                                            ID\n                                        "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      {
+                                        staticClass:
+                                          "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                                        attrs: { scope: "col" }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                            Team ID\n                                        "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      {
+                                        staticClass:
+                                          "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                                        attrs: { scope: "col" }
+                                      },
+                                      [
+                                        _vm._v(
                                           "\n                                            Name\n                                        "
                                         )
                                       ]
@@ -48028,7 +48829,7 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                            Title\n                                        "
+                                          "\n                                            Phone\n                                        "
                                         )
                                       ]
                                     ),
@@ -48042,7 +48843,7 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                            Status\n                                        "
+                                          "\n                                            Email\n                                        "
                                         )
                                       ]
                                     ),
@@ -48056,7 +48857,35 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                            Role\n                                        "
+                                          "\n                                            Sticky Phone Number ID\n                                        "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      {
+                                        staticClass:
+                                          "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                                        attrs: { scope: "col" }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                            Created At\n                                        "
+                                        )
+                                      ]
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "th",
+                                      {
+                                        staticClass:
+                                          "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+                                        attrs: { scope: "col" }
+                                      },
+                                      [
+                                        _vm._v(
+                                          "\n                                            Updated At\n                                        "
                                         )
                                       ]
                                     ),
@@ -48069,7 +48898,7 @@ var render = function() {
                                       },
                                       [
                                         _c("span", { staticClass: "sr-only" }, [
-                                          _vm._v("Edit")
+                                          _vm._v("View")
                                         ])
                                       ]
                                     )
@@ -48082,162 +48911,360 @@ var render = function() {
                                     staticClass:
                                       "bg-white divide-y divide-gray-200"
                                   },
-                                  [
-                                    _c("tr", [
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass:
-                                            "px-6 py-4 whitespace-nowrap"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass: "flex items-center"
-                                            },
-                                            [
-                                              _c(
-                                                "div",
-                                                {
-                                                  staticClass:
-                                                    "flex-shrink-0 h-10 w-10"
-                                                },
-                                                [
-                                                  _c("img", {
-                                                    staticClass:
-                                                      "h-10 w-10 rounded-full",
-                                                    attrs: {
-                                                      src:
-                                                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-                                                      alt: ""
-                                                    }
-                                                  })
-                                                ]
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                { staticClass: "ml-4" },
-                                                [
-                                                  _c(
-                                                    "div",
-                                                    {
-                                                      staticClass:
-                                                        "text-sm font-medium text-gray-900"
-                                                    },
-                                                    [
-                                                      _vm._v(
-                                                        "\n                                                        Jane Cooper\n                                                    "
-                                                      )
-                                                    ]
-                                                  ),
-                                                  _vm._v(" "),
-                                                  _c(
-                                                    "div",
-                                                    {
-                                                      staticClass:
-                                                        "text-sm text-gray-500"
-                                                    },
-                                                    [
-                                                      _vm._v(
-                                                        "\n                                                        jane.cooper@example.com\n                                                    "
-                                                      )
-                                                    ]
-                                                  )
-                                                ]
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass:
-                                            "px-6 py-4 whitespace-nowrap"
-                                        },
-                                        [
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "text-sm text-gray-900"
-                                            },
-                                            [
-                                              _vm._v(
-                                                "Regional Paradigm Technician"
-                                              )
-                                            ]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "div",
-                                            {
-                                              staticClass:
-                                                "text-sm text-gray-500"
-                                            },
-                                            [_vm._v("Optimization")]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass:
-                                            "px-6 py-4 whitespace-nowrap"
-                                        },
-                                        [
-                                          _c(
-                                            "span",
-                                            {
-                                              staticClass:
-                                                "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-                                            },
-                                            [
-                                              _vm._v(
-                                                "\n              Active\n            "
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass:
-                                            "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                                        },
-                                        [
-                                          _vm._v(
-                                            "\n                                            Admin\n                                        "
-                                          )
-                                        ]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "td",
-                                        {
-                                          staticClass:
-                                            "px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
-                                        },
-                                        [
-                                          _c(
-                                            "a",
-                                            {
-                                              staticClass:
-                                                "text-indigo-600 hover:text-indigo-900",
-                                              attrs: { href: "#" }
-                                            },
-                                            [_vm._v("Edit")]
-                                          )
-                                        ]
-                                      )
-                                    ])
-                                  ]
+                                  _vm._l(_vm.contacts, function(contact) {
+                                    return _c(
+                                      "tr",
+                                      { key: "contact-" + contact.fields.id },
+                                      [
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields.id
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .team_id
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .name
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .phone
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .email
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .sticky_phone_number_id
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .created_at
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "flex items-center"
+                                              },
+                                              [
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "ml-4" },
+                                                  [
+                                                    _c(
+                                                      "div",
+                                                      {
+                                                        staticClass:
+                                                          "text-sm font-medium text-gray-900"
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                                                        " +
+                                                            _vm._s(
+                                                              contact.fields
+                                                                .updated_at
+                                                            ) +
+                                                            "\n                                                    "
+                                                        )
+                                                      ]
+                                                    )
+                                                  ]
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          {
+                                            staticClass:
+                                              "px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                                          },
+                                          [
+                                            _c(
+                                              "a",
+                                              {
+                                                staticClass:
+                                                  "text-indigo-600 hover:text-indigo-900",
+                                                attrs: { href: "#" }
+                                              },
+                                              [_vm._v("View")]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  }),
+                                  0
                                 )
                               ]
                             )
@@ -61772,14 +62799,15 @@ module.exports = function(module) {
 /*!********************************************************!*\
   !*** ./resources/js/Components/ContactsUploadForm.vue ***!
   \********************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ContactsUploadForm.vue?vue&type=template&id=0a44f4a3& */ "./resources/js/Components/ContactsUploadForm.vue?vue&type=template&id=0a44f4a3&");
 /* harmony import */ var _ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ContactsUploadForm.vue?vue&type=script&lang=js& */ "./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ContactsUploadForm_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -61809,7 +62837,7 @@ component.options.__file = "resources/js/Components/ContactsUploadForm.vue"
 /*!*********************************************************************************!*\
   !*** ./resources/js/Components/ContactsUploadForm.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -61832,6 +62860,144 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactsUploadForm_vue_vue_type_template_id_0a44f4a3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/Components/ErrorBag.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/Components/ErrorBag.vue ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true& */ "./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true&");
+/* harmony import */ var _ErrorBag_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ErrorBag.vue?vue&type=script&lang=js& */ "./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ErrorBag_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "6375dbaa",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Components/ErrorBag.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ErrorBag_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ErrorBag.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ErrorBag.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ErrorBag_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/ErrorBag.vue?vue&type=template&id=6375dbaa&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ErrorBag_vue_vue_type_template_id_6375dbaa_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/Components/Loading.vue":
+/*!*********************************************!*\
+  !*** ./resources/js/Components/Loading.vue ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Loading.vue?vue&type=template&id=0e188e7e&scoped=true& */ "./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true&");
+/* harmony import */ var _Loading_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Loading.vue?vue&type=script&lang=js& */ "./resources/js/Components/Loading.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Loading_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "0e188e7e",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/Components/Loading.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/Components/Loading.vue?vue&type=script&lang=js&":
+/*!**********************************************************************!*\
+  !*** ./resources/js/Components/Loading.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Loading.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/Loading.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true& ***!
+  \****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Loading.vue?vue&type=template&id=0e188e7e&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/Components/Loading.vue?vue&type=template&id=0e188e7e&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Loading_vue_vue_type_template_id_0e188e7e_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
