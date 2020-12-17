@@ -69,6 +69,25 @@
                                                 </p>
                                             </div>
                                         </div>
+                                        <div v-show="!isLoading"
+                                             class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                                            <div class="space-y-1 text-center">
+                                                <div class="flex text-sm text-gray-600">
+                                                    <label for="delimiter"
+                                                           class="relative bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                                                        <span class="text-base ml-2 hover:scale-110 focus:outline-none flex justify-center px-4 py-2 rounded font-bold hover:bg-teal-600 bg-teal-600 text-teal-100 border duration-200 ease-in-out border-teal-600 transition mb-2">
+                                                            Type delimiter
+                                                        </span>
+                                                        <input id="delimiter" name="delimiter" type="text"
+                                                               v-model="form.delimiter"
+                                                               class="text-l border p-2 ml-2 mt-2">
+                                                    </label>
+                                                </div>
+                                                <p class="text-l border p-2 ml-2 mt-2">
+                                                    Accepts <strong>,</strong> or <strong>;</strong>
+                                                </p>
+                                            </div>
+                                        </div>
                                         <loading v-show="isLoading"></loading>
                                     </div>
                                 </div>
@@ -247,6 +266,7 @@ export default {
                 contactsData: [],
                 mappedFields: [],
                 mappedData: [],
+                delimiter: ',',
             },
             successImportMessage: '',
             errors: [],
@@ -271,7 +291,7 @@ export default {
                     key: 'confirm',
                     title: 'Confirm',
                     callback: this.confirm,
-                    flex: 3,
+                    flex: 0,
                 },
             ];
         },
@@ -292,6 +312,7 @@ export default {
         upload() {
             let formData = new FormData();
             formData.append('file', this.form.file);
+            formData.append('delimiter', this.form.delimiter);
             this.isLoading = true;
             return axios.post('/import/parse-contacts', formData).then(res => {
                 this.form.contactsHeaders = res.data.data.contactsHeaders;
@@ -334,13 +355,16 @@ export default {
                     custom_attributes: mapped_custom_attributes,
                 });
             });
-            return axios.post('/import/import-contacts', this.form.mappedData).then(() => {
-                this.isLoading = false;
-                this.successImportMessage = 'Contacts are successfully imported.';
-                Inertia.visit('contacts', {only: ['contacts']});
-            }).catch(e => {
-                throw e;
-            });
+            return axios.post('/import/import-contacts',
+                {mappedData: this.form.mappedData, delimiter: this.form.delimiter}).
+                then(() => {
+                    this.isLoading = false;
+                    this.successImportMessage = 'Contacts are successfully imported.';
+                    Inertia.visit('contacts', {only: ['contacts']});
+                }).
+                catch(e => {
+                    throw e;
+                });
         },
         next() {
             this.errors = [];
@@ -365,3 +389,11 @@ export default {
     },
 };
 </script>
+<style scoped>
+.flex-0 {
+    flex: 0;
+}
+.flex-1 {
+    flex: 1;
+}
+</style>
