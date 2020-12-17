@@ -1,13 +1,28 @@
 ## Information
-This is an example laravel application to show base of importing documents in laravel.
+This is an example laravel application to show base of importing documents in laravel with field mapping.
 
 ## Installation
-- Please refer this page - https://laravel.com/docs/8.x/installation to get Laravel Sail installed.
-- To build containers just run `sail up` command in root directory of project.
-- Next step is to run the next commands:
-    - `sail composer install`
-    - `sail artisan migrate` and `sail artisan db:seed`(if you would like to see some examplese)
-    - `sail npm install`
-    - `sail npm run prod` or `sail npm run dev`   
-
-
+- The first step is to install docker and docker-compose - https://docs.docker.com/get-docker/
+- The second step is to run following commands:
+    - ```
+      docker run --rm \
+           -v $(pwd):/opt \
+           -w /opt \
+           laravelsail/php80-composer:latest \
+           composer install
+      ```
+    - ```
+      ./vendor/bin/sail up
+      ```
+    - ```
+      ./vendor/bin/sail artisan migrate      
+      ```
+    - ```
+      ./vendor/bin/sail npm install
+      ```
+    - ```
+      ./vendor/bin/sail npm run prod
+       or
+      ./vendor/bin/sail npm run dev
+      ```
+- The third step is to [register](http://localhost/register) user and go to [contacts](http://localhost/contacts) page and try to upload CSV. 
