@@ -21,10 +21,8 @@ class ContactsListTest extends TestCase
         $user = User::factory()->create();
         $response = $this->actingAs($user)
             ->withSession(['banned' => false])
-            ->get('/contacts')->assertOk();
+            ->get('/contacts');
 
         $response->assertOk();
-
-        $response->assertStatus(200);
     }
 }

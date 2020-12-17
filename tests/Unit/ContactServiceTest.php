@@ -64,7 +64,6 @@ class ContactServiceTest extends TestCase
         app()->instance(ContactService::class, $contactService);
         $contactService->shouldReceive('importContacts')->with(UploadedFile::class)->once()->andReturn([]);
 
-
         $file_content = '"FooKey", "BarKey", "BarKey2", "BarKey3", "BarKey4", "BarKey5", "BarKey6", "BarKey7", "BarKey8"
                          "example@examole.com", "example","2","2","+38000000000","CustomAttr","CustomAttr34","CustomAttr123"
                          "example.example@example.com", "example","1","1","+38000000001","CustomAttr2","CustomAttr12","CustomAttr213"';

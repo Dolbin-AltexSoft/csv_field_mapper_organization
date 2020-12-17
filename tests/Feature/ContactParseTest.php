@@ -25,7 +25,6 @@ class ContactParseTest extends TestCase
                          "example.example@example.com", "example","1","1","+38000000001","CustomAttr2","CustomAttr12","CustomAttr213"';
         $file = UploadedFile::fake()->createWithContent('testcase.csv', $file_content);
 
-
         $response = $this->actingAs($user)
             ->withSession(['banned' => false])
             ->post('/import/parse-contacts', ['file' => $file]);
