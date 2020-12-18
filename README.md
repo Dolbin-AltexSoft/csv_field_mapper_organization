@@ -26,3 +26,9 @@ This is an example laravel application to show base of importing documents in la
       ./vendor/bin/sail npm run dev
       ```
 - The third step is to [register](http://localhost/register) user and go to [contacts](http://localhost/contacts) page and try to upload CSV. 
+
+## Tests
+If you would like to run test run:
+```
+./vendor/bin/sail artisan test
+```
